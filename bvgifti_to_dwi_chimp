@@ -1,0 +1,28 @@
+for subj in Bo_Yerkes Barbara Callie Cissie Elvira Evelyne Fiona Foxy Frannie Jacqueline Jewelle Leslie Marietta Sabrina Wenka; do
+
+#INPUT
+nobias=/hpc/meca/data/Chimpanzees/ChimpsFromCAT12/subject3T/$subj/t1mri/default_acquisition/default_analysis/nobias_${subj}.nii.gz
+gifti_bv_left=/hpc/meca/users/loh.k/interspecies_hiphop/RemeshToMacaque/direct/chimp/${subj}_Lwhite_remeshed_hiphop_to_macaque.gii
+gifti_bv_right=/hpc/meca/users/loh.k/interspecies_hiphop/RemeshToMacaque/direct/chimp/${subj}_Rwhite_remeshed_hiphop_to_macaque.gii
+anat_to_dwi=/hpc/meca/users/bruhn.l/Chimps/anat_to_dwib0_${subj}.nii.gz
+
+#OUTPUT
+transform=/hpc/meca/users/bruhn.l/FINGERPRINTS/CHIMPS/$subj/nobias_to_dwi.trm
+inv=/hpc/meca/users/bruhn.l/FINGERPRINTS/CHIMPS/$subj/dwi_to_nobias.trm
+nobias_to_dwi=/hpc/meca/users/bruhn.l/FINGERPRINTS/CHIMPS/$subj/nobias_to_dwi.nii.gz
+gifti_reg_left=/hpc/meca/users/bruhn.l/FINGERPRINTS/CHIMPS/$subj/${subj}_Lwhite_dwi.gii
+gifti_reg_right=/hpc/meca/users/bruhn.l/FINGERPRINTS/CHIMPS/$subj/${subj}_Rwhite_dwi.gii
+gifti_fsl_left=/hpc/meca/users/bruhn.l/FINGERPRINTS/CHIMPS/${subj}_Lwhite_dwi_fsl.surf.gii
+gifti_fsl_right=/hpc/meca/users/bruhn.l/FINGERPRINTS/CHIMPS/${subj}_Rwhite_dwi_fsl.surf.gii
+
+mkdir /hpc/meca/users/bruhn.l/FINGERPRINTS/CHIMPS/$subj/
+
+AimsMIRegister -t $nobias -r $anat_to_dwi --dir $transform --inv $inv
+AimsResample -i $nobias -o $nobias_to_dwi -m $transform -r $anat_to_dwi
+AimsMeshTransform -i $gifti_bv_left -o $gifti_reg_left -t $transform
+AimsMeshTransform -i $gifti_bv_right -o $gifti_reg_right -t $transform
+
+python /hpc/meca/softs/scripts/transformGiftiToFSL.py $gifti_reg_left $nobias_to_dwi $gifti_fsl_left
+python /hpc/meca/softs/scripts/transformGiftiToFSL.py $gifti_reg_right $nobias_to_dwi $gifti_fsl_right
+
+done

@@ -1,0 +1,30 @@
+for subj in 103414 107321 108525 108828 114419 117324 118730 121618 123117 138231 144832 147030 150726 152831 153429 154936 156233 156637 158540 173536 173940 180129 188347 189450 193239 194645 198350 201111 210415 211316 211417 212116 212217 214423 214726 268850 285345 303119 304020 445543 530635 540436 545345 580044 583858 598568 673455 759869 788876; do
+
+#103111
+
+#INPUT
+nobias=/envau/work/meca/data/HCP/data/BV_database/subjects/$subj/t1mri/HCP_pipeline_modified/default_analysis/nobias_${subj}.nii.gz
+gifti_bv_left=/hpc/meca/users/loh.k/interspecies_hiphop/RemeshToMacaque/direct/human/${subj}_Lwhite_remeshed_hiphop_to_macaque.gii
+gifti_bv_right=/hpc/meca/users/loh.k/interspecies_hiphop/RemeshToMacaque/direct/human/${subj}_Rwhite_remeshed_hiphop_to_macaque.gii
+anat_to_dwi=/hpc/meca/users/bruhn.l/HCP_donders/anat_to_dwib0_${subj}.nii.gz
+
+#OUTPUT
+transform=/hpc/meca/users/bruhn.l/FINGERPRINTS/HUMANS/$subj/nobias_to_dwi.trm
+inv=/hpc/meca/users/bruhn.l/FINGERPRINTS/HUMANS/$subj/dwi_to_nobias.trm
+nobias_to_dwi=/hpc/meca/users/bruhn.l/FINGERPRINTS/HUMANS/$subj/nobias_to_dwi.nii.gz
+gifti_reg_left=/hpc/meca/users/bruhn.l/FINGERPRINTS/HUMANS/$subj/${subj}_Lwhite_dwi.gii
+gifti_reg_right=/hpc/meca/users/bruhn.l/FINGERPRINTS/HUMANS/$subj/${subj}_Rwhite_dwi.gii
+gifti_fsl_left=/hpc/meca/users/bruhn.l/FINGERPRINTS/HUMANS/${subj}_Lwhite_dwi_fsl.surf.gii
+gifti_fsl_right=/hpc/meca/users/bruhn.l/FINGERPRINTS/HUMANS/${subj}_Rwhite_dwi_fsl.surf.gii
+
+mkdir /hpc/meca/users/bruhn.l/FINGERPRINTS/HUMANS/$subj
+
+AimsMIRegister -t $nobias -r $anat_to_dwi --dir $transform --inv $inv
+AimsResample -i $nobias -o $nobias_to_dwi -m $transform -r $anat_to_dwi
+AimsMeshTransform -i $gifti_bv_left -o $gifti_reg_left -t $transform
+AimsMeshTransform -i $gifti_bv_right -o $gifti_reg_right -t $transform
+
+python /hpc/meca/softs/scripts/transformGiftiToFSL.py $gifti_reg_left $nobias_to_dwi $gifti_fsl_left
+python /hpc/meca/softs/scripts/transformGiftiToFSL.py $gifti_reg_right $nobias_to_dwi $gifti_fsl_right
+
+done

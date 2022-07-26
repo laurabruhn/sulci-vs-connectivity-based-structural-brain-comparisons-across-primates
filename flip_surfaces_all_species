@@ -1,0 +1,33 @@
+for subj in 103111 103414 107321 108525 108828 114419 117324 118730 121618 123117 138231 144832 147030 150726 152831; do
+
+for hemi in L R; do
+
+wb_command -surface-flip-lr /project/2420132.01/data/humans/${subj}_${hemi}white_dwi_fsl.surf.gii /project/2420132.01/data/humans/${subj}_${hemi}white_dwi_fsl_flipped.surf.gii 
+
+done
+done
+
+for subj in Bo Callie Cissie Elvira Evelyne Fiona Foxy Frannie Jewelle Leslie Marietta Sabrina Wenka; do
+
+for hemi in L R; do
+
+wb_command -surface-flip-lr /project/2420132.01/data/chimps/${subj}/${subj}_${hemi}white_dwi_fsl.surf.gii /project/2420132.01/data/chimps/${subj}_${hemi}white_dwi_fsl_flipped.surf.gii 
+
+done
+done
+
+for subj in Alf Arthur Babar Celine Falbala Fildar Garcia Icono IvarJr; do
+for hemi in L R; do
+
+wb_command -surface-flip-lr /project/2420132.01/data/baboon_adrien/sub-${subj}/${subj}_${hemi}white_dwi_fsl.surf.gii /project/2420132.01/data/baboon_adrien/${subj}_${hemi}white_dwi_fsl_flipped.surf.gii 
+
+done
+done
+
+for subj in 032125 032126 032127 032128 032130 032131 032132 032133 032134 032135 032136 032137 032138 032140 032141 032142 032143; do
+for hemi in L R; do
+
+wb_command -surface-flip-lr /project/2420132.01/data/macaques/sub-${subj}/${subj}_${hemi}white_dwi_fsl.surf.gii /project/2420132.01/data/macaques/${subj}_${hemi}white_dwi_fsl_flipped.surf.gii 
+
+done
+done

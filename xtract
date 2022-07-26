@@ -1,0 +1,31 @@
+for subj in Barbara Callie Cissie Elvira Evelyne Fiona Foxy Frannie Jacqueline Jaimie Jewelle Leslie Marietta Sabrina Wenka; do
+
+#Bo
+
+studyDir=/project/2420132.01/data/chimps
+maskDir=/project/2420132.01/data/chimps/recipes
+
+#echo "module unload fsl
+module load fsl/6.0.3
+module load cuda/10.0
+
+#flirt -in /project/2420132.01/data/chimps/$subj/Diffusion_bpx_ARD.bedpostX/mean_f1samples.nii.gz -ref /opt/mr-cat/latest/data/chimpanzee/Chimplate/ChimpYerkes29_AverageT1w_restore.nii.gz -omat /project/2420132.01/data/chimps/$subj/diff2std.mat -out /project/2420132.01/data/chimps/$subj/diff2std_linear.nii.gz
+
+#fnirt --ref=/opt/mr-cat/latest/data/chimpanzee/Chimplate/ChimpYerkes29_AverageT1w_restore.nii.gz --in=/project/2420132.01/data/chimps/$subj/Diffusion_bpx_ARD.bedpostX/mean_f1samples.nii.gz --aff=/project/2420132.01/data/chimps/$subj/diff2std.mat --iout=/project/2420132.01/data/chimps/$subj/diff2std_nonlinear.nii.gz --cout=/project/2420132.01/data/chimps/$subj/Diffusion_bpx_ARD.bedpostX/xfms/diff2standard.nii.gz
+
+#invwarp -w /project/2420132.01/data/chimps/$subj/Diffusion_bpx_ARD.bedpostX/xfms/diff2standard.nii.gz -o /project/2420132.01/data/chimps/$subj/Diffusion_bpx_ARD.bedpostX/xfms/standard2diff.nii.gz -r /project/2420132.01/data/chimps/$subj/Diffusion_bpx_ARD.bedpostX/mean_f1samples.nii.gz" > /project/2420132.01/scripts/chimps/${subj}_warp
+
+
+echo "module unload fsl
+module load fsl/6.0.3
+module load cuda/10.0
+
+for tract in ac_l ac_r af_l af_r ar_l ar_r atr_l atr_r cbd_l cbd_r cbp_l cbp_r cbt_l cbt_r cst_l cst_r fa_l fa_r fma fmi fx_l fx_r ifo_l ifo_r ilf_l ilf_r mcp mdlf_l mdlf_r or_l or_r ptr_l ptr_r slf1_l slf1_r slf2_l slf2_r slf3_l slf3_r str_l str_r uf_l uf_r vof_l vof_r; do
+
+xtract -bpx $studyDir/$subj/Diffusion_bpx_ARD.bedpostX -out $studyDir/$subj/xtract_native -p $maskDir -str /project/2420132.01/scripts/xtract_scripts/tractfile_\${tract} -ptx_options /project/2420132.01/scripts/xtract_scripts/probtrackx_options_chimp -stdwarp $studyDir/$subj/Diffusion_bpx_ARD.bedpostX/xfms/standard2diff.nii.gz $studyDir/$subj/Diffusion_bpx_ARD.bedpostX/xfms/diff2standard.nii.gz -gpu -native
+
+done" > /project/2420132.01/scripts/chimps/${subj}_xtract
+
+
+done
+

@@ -1,0 +1,29 @@
+for subj in 032125 032126 032127 032128 032130 032131 032132 032133 032134 032135 032136 032137 032138 032140 032141 032142 032143; do
+
+#mkdir /hpc/meca/users/bruhn.l/FINGERPRINTS/MACAQUES/${subj}
+
+#INPUT
+nobias=/hpc/meca/data/Macaques/BV_macaque_db/PRIME_DE/ucdavis_${subj}/t1mri/default_acquisition/default_analysis/nobias_ucdavis_${subj}.nii.gz
+gifti_bv_left=/hpc/meca/users/loh.k/interspecies_hiphop/macaque/ucdavis_${subj}/ucdavis_${subj}_Lwhite_remeshed_hiphop.gii
+gifti_bv_right=/hpc/meca/users/loh.k/interspecies_hiphop/macaque/ucdavis_${subj}/ucdavis_${subj}_Rwhite_remeshed_hiphop.gii
+anat_to_dwi=/hpc/meca/users/bruhn.l/FINGERPRINTS/MACAQUES/${subj}/anat_to_dwib0.nii.gz
+
+#OUTPUT
+transform=/hpc/meca/users/bruhn.l/FINGERPRINTS/MACAQUES/${subj}/nobias_to_dwi.trm
+inv=/hpc/meca/users/bruhn.l/FINGERPRINTS/MACAQUES/${subj}/dwi_to_nobias.trm
+nobias_to_dwi=/hpc/meca/users/bruhn.l/FINGERPRINTS/MACAQUES/${subj}/nobias_to_dwi.nii.gz
+gifti_reg_left=/hpc/meca/users/bruhn.l/FINGERPRINTS/MACAQUES/${subj}/${subj}_Lwhite_dwi.gii
+gifti_reg_right=/hpc/meca/users/bruhn.l/FINGERPRINTS/MACAQUES/${subj}/${subj}_Rwhite_dwi.gii
+gifti_fsl_left=/hpc/meca/users/bruhn.l/FINGERPRINTS/MACAQUES/${subj}/${subj}_Lwhite_dwi_fsl.surf.gii
+gifti_fsl_right=/hpc/meca/users/bruhn.l/FINGERPRINTS/MACAQUES/${subj}/${subj}_Rwhite_dwi_fsl.surf.gii
+
+
+AimsMIRegister -t $nobias -r $anat_to_dwi --dir $transform --inv $inv
+AimsResample -i $nobias -o $nobias_to_dwi -m $transform -r $anat_to_dwi
+AimsMeshTransform -i $gifti_bv_left -o $gifti_reg_left -t $transform
+AimsMeshTransform -i $gifti_bv_right -o $gifti_reg_right -t $transform
+
+python /hpc/meca/softs/scripts/transformGiftiToFSL.py $gifti_reg_left $nobias_to_dwi $gifti_fsl_left
+python /hpc/meca/softs/scripts/transformGiftiToFSL.py $gifti_reg_right $nobias_to_dwi $gifti_fsl_right
+
+done

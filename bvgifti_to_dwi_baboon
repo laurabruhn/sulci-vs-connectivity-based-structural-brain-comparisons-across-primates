@@ -1,0 +1,24 @@
+for subj in Alf Arthur Babar Celine Falbala Fildar Garcia Icono; do
+
+#mkdir /hpc/meca/users/bruhn.l/FINGERPRINTS/BABOONS/sub-$subj/
+
+#INPUT
+nobias=/hpc/meca/data/Baboons/BV_Baboons/Adrien/_session_01_subject_$subj/t1mri/default_acquisition/default_analysis/nobias__session_01_subject_${subj}.nii.gz
+gifti_bv=/hpc/meca/users/loh.k/interspecies_hiphop/RemeshToMacaque/direct/baboon/_session_01_subject_${subj}_Rwhite_remeshed_hiphop_to_macaque.gii
+anat_to_dwi=/hpc/meca/users/bruhn.l/FINGERPRINTS/BABOONS/sub-$subj/anat_to_dwib0.nii.gz
+
+#OUTPUT
+transform=/hpc/meca/users/bruhn.l/FINGERPRINTS/BABOONS/sub-$subj/nobias_to_dwi.trm
+inv=/hpc/meca/users/bruhn.l/FINGERPRINTS/BABOONS/sub-$subj/dwi_to_nobias.trm
+nobias_to_dwi=/hpc/meca/users/bruhn.l/FINGERPRINTS/BABOONS/sub-$subj/nobias_to_dwi.nii.gz
+gifti_reg=/hpc/meca/users/bruhn.l/FINGERPRINTS/BABOONS/sub-$subj/${subj}_Rwhite_dwi.gii
+gifti_fsl=/hpc/meca/users/bruhn.l/FINGERPRINTS/BABOONS/${subj}_Rwhite_dwi_fsl.surf.gii
+
+
+AimsMIRegister -t $nobias -r $anat_to_dwi --dir $transform --inv $inv
+AimsResample -i $nobias -o $nobias_to_dwi -m $transform -r $anat_to_dwi
+AimsMeshTransform -i $gifti_bv -o $gifti_reg -t $transform
+
+python /hpc/meca/softs/scripts/transformGiftiToFSL.py $gifti_reg $nobias_to_dwi $gifti_fsl
+
+done
